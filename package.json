@@ -109,7 +109,7 @@
             "provider": "github",
             "owner": "stemyy",
             "repo": "test",
-            "private": true
+            "private": false
         }
     },
     "jest": {
