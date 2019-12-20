@@ -10,11 +10,9 @@ import log from 'electron-log';
 
 import ensureMigrationsTable from './ensureMigrationsTable';
 import { Migration } from '../model';
-import migration1 from "./1-add-description";
 
 // Migrations (`up`) should be functions that return a Promise.
 const migrations = {
-    1: migration1
 };
 
 export async function pendingMigrations() {

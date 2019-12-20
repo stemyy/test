@@ -1,8 +1,7 @@
 {
     "name": "stocker",
-    "author": "Myystigri <pessi@myyst.fr> (https://github.com/Myystigri)",
     "productName": "Stocker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Stock management application made from Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
     "scripts": {
         "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -28,7 +27,6 @@
         "precommit": "lint-staged",
         "prestart": "yarn build",
         "rebuild": "electron-rebuild -f -w sqlite3",
-        "release": "build",
         "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
         "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
         "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js",
@@ -88,8 +86,7 @@
         "win": {
             "publish": ["github"],
             "target": [
-                "nsis",
-                "msi"
+                "nsis"
             ]
         },
         "linux": {
@@ -108,8 +105,7 @@
         "publish": {
             "provider": "github",
             "owner": "stemyy",
-            "repo": "test",
-            "private": false
+            "repo": "test"
         }
     },
     "jest": {
@@ -129,6 +125,11 @@
         "setupFiles": [
             "./internals/scripts/CheckBuiltsExist.js"
         ]
+    },
+    "author": "Stemyy",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stemyy/test.git"
     },
     "devDependencies": {
         "@babel/core": "^7.1.6",
