@@ -13,6 +13,7 @@ import migration2 from "./2-rename-order-product";
 import migration3 from "./3-add-order-productId";
 import migration4 from "./4-rename-order-provider";
 import migration5 from "./5-add-order-providerId";
+import {app} from "electron";
 
 // Migrations (`up`) should be functions that return a Promise.
 const migrations = {
@@ -48,7 +49,10 @@ export async function migrateDatabase() {
         log.info(`SQLite - Running migration ${migrationNumber}`);
         const up = migrations[migrationNumber];
         await up();
-        await Migration.create({ id: migrationNumber, executedAt: new Date() });
+        await Migration.create({ id: migrationNumber, executedAt: new Date() }).catch(err => {
+            console.log(err);
+            app.quit();
+        });
         log.info(`SQLite - Migration ${migrationNumber} succeeded`);
     }
 }

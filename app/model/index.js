@@ -386,10 +386,12 @@ export function initSequelize() {
             })
         }).catch(err => {
             console.log(err);
+            app.quit();
         });
         return null;
     }).catch(err => {
         console.log(err);
+        app.quit();
     });
 }
 
