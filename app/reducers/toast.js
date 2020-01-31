@@ -8,7 +8,8 @@ export default function category(state: toast = null, action: Action) {
             return action.options;
 
         case 'CLOSE_TOAST':
-            return state ? {...state, ...{open: false}} : null;
+            if (!state) return null;
+            return (state.openedAt === action.id) ? {...state, ...{open: false}} : state;
 
         case 'REMOVE_TOAST':
             return null;

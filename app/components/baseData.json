@@ -1,51 +1,51 @@
 {
-  "baseRows": [
-    {
-      "name": "drawer",
-      "dbName": "drawer",
-      "label": "Tiroir"
-    },
-    {
-      "name": "row",
-      "dbName": "row",
-      "label": "Rangée"
-    },
-    {
-      "name": "providers",
-      "dbName": "providers",
-      "label": "Fournisseur"
-    },
-    {
-      "name": "makers",
-      "dbName": "makers",
-      "label": "Fabricant"
-    },
-    {
-      "name": "name",
-      "dbName": "name",
-      "label": "Désignation Article"
-    },
-    {
-      "name": "reference",
-      "dbName": "reference",
-      "label": "Référence"
-    },
-    {
-      "name": "categoryId",
-      "dbName": "categoryId",
-      "label": "Catégorie"
-    }
-  ],
-  "tableRows": [
-    {
-      "name": "price",
-      "dbName": "stocks",
-      "label": "Valeur"
-    },
-    {
-      "name": "quantity",
-      "dbName": "stocks",
-      "label": "Stock"
-    }
-  ]
+    "baseRows": [
+        {
+            "name": "drawer",
+            "dbName": "drawer",
+            "label": "Tiroir"
+        },
+        {
+            "name": "row",
+            "dbName": "row",
+            "label": "Rangée"
+        },
+        {
+            "name": "providers",
+            "dbName": "providers",
+            "label": "Fournisseur"
+        },
+        {
+            "name": "makers",
+            "dbName": "makers",
+            "label": "Fabricant"
+        },
+        {
+            "name": "name",
+            "dbName": "name",
+            "label": "Désignation Article"
+        },
+        {
+            "name": "reference",
+            "dbName": "reference",
+            "label": "Référence"
+        },
+        {
+            "name": "categoryId",
+            "dbName": "categoryId",
+            "label": "Catégorie"
+        }
+    ],
+    "tableRows": [
+        {
+            "name": "price",
+            "dbName": "stocks",
+            "label": "Valeur"
+        },
+        {
+            "name": "quantity",
+            "dbName": "stocks",
+            "label": "Stock"
+        }
+    ]
 }

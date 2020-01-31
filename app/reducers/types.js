@@ -13,6 +13,7 @@ export type Action = {
     +id: number,
     +row: object,
     +updates: object,
+    +element: object
 };
 
 export type GetState = () => productStateType;

@@ -42,7 +42,6 @@ const RemoveStock = (props) => {
     const handleSelectedProduct = (event) => {
         const selectedId = event.target.value;
         const selected = products.find(product => product.value === selectedId);
-        console.log(selected.stocks);
         const productStocks = selected ? selected.stocks.filter(function(stock) {
             return stock.quantity >= 1;
         }).sort(function(a,b){ // sort by date to display the newest first

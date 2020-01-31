@@ -10,6 +10,7 @@ import EditStock from "./Dialog/EditStock";
 import AddProduct from "./Dialog/AddProduct";
 import {Dialog} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import StockAlert from "./StockAlertBanner";
 
 const useStyles = makeStyles(theme => ({
     speedDial: {
@@ -43,6 +44,7 @@ const StockDialog = (props) => {
     }
     return (
         <React.Fragment>
+            <StockAlert handleDialog={handleDialog}/>
             <SpeedDial
                 ariaLabel="Actions"
                 className={classes.speedDial}

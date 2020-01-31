@@ -77,8 +77,8 @@ function StockPage(props) {
                     ))}
                 </Tabs>
             </AppBar>
-            <StockTable rows={rows} products={(activeTab !== 0) ? products.filter(product => product.categoryId === activeTab) : products} toggleUpdateProductDialog={toggleUpdateProductDialog}/>
             <StockDialogs rows={rows} addProduct={addProduct}/>
+            <StockTable rows={rows} products={(activeTab !== 0) ? products.filter(product => product.categoryId === activeTab) : products} toggleUpdateProductDialog={toggleUpdateProductDialog}/>
             <UpdateProductDialog product={selectedProduct} isOpen={editProductDialogIsOpen} setIsOpen={toggleUpdateProductDialog} removeProduct={removeProduct} updateProduct={updateProduct}/>
             <CategoryDialog toggleDialogCategory={toggleDialogCategory} products={products} category={selectedCategory} type={categoryType}/>
         </React.Fragment>

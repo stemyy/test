@@ -1,5 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {MenuItem, FormControl, InputLabel, Input, FormHelperText, InputAdornment, Select} from '@material-ui/core';
+import {
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Input,
+    FormHelperText,
+    InputAdornment,
+    Select,
+    Checkbox, FormControlLabel
+} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyle = makeStyles(theme => ({
@@ -46,6 +55,7 @@ const AddStock = (props) => {
     const [amount, setAmount] = useState('');
     const [lastPrice, setLastPrice] = useState('');
     const [price, setPrice] = useState('');
+    const [skipOrder, setSkipOrder] = useState(false);
 
     const handleSelectedProduct = (event) => {
         const selectedId = event.target.value;
@@ -92,10 +102,13 @@ const AddStock = (props) => {
         const isValid = Boolean(productSelectValue && providerSelectValue && amount && price);
         if (isValid) {
             const order = {
+                'skipped': skipOrder,
                 'quantity': amount,
                 'price': price,
-                'provider': selectedProvider.label,
-                'product': selectedProduct.label,
+                'providerName': selectedProvider.label,
+                'productName': selectedProduct.label,
+                'providerId': providerSelectValue,
+                'productId': productSelectValue,
                 'received': false,
                 'stock': {
                     'quantity': 0,
@@ -107,7 +120,7 @@ const AddStock = (props) => {
             setSubmitArguments([order]);
         }
         setIsValid(isValid);
-    }, [productSelectValue, providerSelectValue, amount, price]);
+    }, [productSelectValue, providerSelectValue, amount, price, skipOrder]);
 
     return (
         <form className={classes.container}>
@@ -162,6 +175,12 @@ const AddStock = (props) => {
                 />
                 <FormHelperText>Soit {pricePerUnit.toFixed(2)}€/u {difference}</FormHelperText>
             </FormControl>
+            <FormControlLabel
+                control={
+                    <Checkbox checked={skipOrder} onChange={() => setSkipOrder(!skipOrder)} value="skipOrder" />
+                }
+                label="Ajout direct"
+            />
         </form>
     )
 };

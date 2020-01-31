@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useSelector, connect } from 'react-redux';
+import {ExpandMore as ExpandMoreIcon} from '@material-ui/icons';
+import {useSelector, connect} from 'react-redux';
 import routes from "../constants/routes";
 import {Link} from "react-router-dom";
 import {bindActionCreators} from "redux";
@@ -123,7 +123,7 @@ const OrderExpansionPanel = (props) => {
 
     if (ordered.received) {
         return (
-            <ExpansionPanel expanded={false} disabled TransitionProps={{unmountOnExit: true}} key={ordered.id}>
+            <ExpansionPanel expanded={false} disabled TransitionProps={{unmountOnExit: true}} key={ordered.receivedAt}>
                 <ExpansionPanelSummary
                     aria-controls="panel1c-content"
                     id="panel1c-header"
@@ -139,7 +139,7 @@ const OrderExpansionPanel = (props) => {
                     <div className={classes.column3}>
                         <Typography className={classes.secondaryHeading}>
                             <Chip
-                                label={ordered.provider}
+                                label={ordered.providerName}
                                 component={Link}
                                 color={"primary"}
                                 to={routes.STOCK}
@@ -148,7 +148,7 @@ const OrderExpansionPanel = (props) => {
                         </Typography>
                     </div>
                     <div className={classes.column3}>
-                        <Typography className={classes.secondaryHeading}>{ordered.quantity} {ordered.product} </Typography>
+                        <Typography className={classes.secondaryHeading}>{ordered.quantity} {ordered.productName} </Typography>
                     </div>
                     <div className={classes.column3}>
                         <Typography className={classes.secondaryHeading}>{ordered.price}€</Typography>
@@ -168,7 +168,7 @@ const OrderExpansionPanel = (props) => {
                         <Typography className={classes.heading}>{new Date(ordered.createdAt).toLocaleString()}</Typography>
                     </div>
                     <div className={classes.column3}>
-                        <Typography className={classes.secondaryHeading}>{ordered.product}</Typography>
+                        <Typography className={classes.secondaryHeading}>{ordered.productName}</Typography>
                     </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.details}>
@@ -180,7 +180,7 @@ const OrderExpansionPanel = (props) => {
                     </div>
                     <div className={classes.column4}>
                         <Chip
-                            label={ordered.provider}
+                            label={ordered.providerName}
                             component={Link}
                             color={"primary"}
                             to={routes.STOCK}

@@ -8,6 +8,7 @@ import provider from './provider';
 import maker from './maker';
 import order from './order';
 import toast from './toast';
+import stockAlerts from './stockAlert';
 
 export default function createRootReducer(history: History) {
     return combineReducers({
@@ -18,6 +19,7 @@ export default function createRootReducer(history: History) {
         categories: category,
         providers: provider,
         makers: maker,
-        toast: toast
+        toast: toast,
+        stockAlerts: stockAlerts
     });
 }

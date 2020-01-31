@@ -15,17 +15,18 @@ export const openToast = (options) => {
     return (dispatch) => {
         dispatch(_openToast(toast));
         setTimeout(() => {
-            dispatch(_removeToast());
+            dispatch(_removeToast(baseToast.openedAt));
         }, toast.autoHideDuration);
     };
 };
 
-const _removeToast = () => ({
-    type: 'CLOSE_TOAST'
+const _removeToast = (id) => ({
+    type: 'CLOSE_TOAST',
+    id: id
 });
 
-export const removeToast = () => {
+export const removeToast = (id) => {
     return (dispatch) => {
-        dispatch(_removeToast());
+        dispatch(_removeToast(id));
     };
 };

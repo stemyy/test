@@ -92,7 +92,6 @@ app.on('ready', async () => {
         mainWindow = null;
     });
 
-    console.log('init sequelize');
     initSequelize();
 
     const menuBuilder = new MenuBuilder(mainWindow);

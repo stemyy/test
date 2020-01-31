@@ -5,6 +5,7 @@ import {migrateDatabase} from "../migrations/migrate";
 import createMigrationModel from "./migration";
 import createStockModel from "./stock";
 import createOrderModel from "./order";
+import createStockChangeModel from "./stockChange";
 import createMakerModel from "./maker";
 import createProductModel from "./product";
 import createCategoryModel from "./category";
@@ -13,19 +14,11 @@ import createRowsModel from "./rows";
 import createProviderModel from "./provider";
 import createProductMakersModel from "./productMakers";
 import createProductProvidersModel from "./productProviders";
+import createStockAlert from "./stockAlert";
 
 let sequelize;
 let Migration;
-let Stock;
-let Order;
-let Maker;
-let Product;
-let Category;
-let ProductData;
-let Rows;
-let Provider;
-let ProductMakers;
-let ProductProviders;
+let Stock, Order, StockChange, Maker, Product, Category, ProductData, Rows, Provider, ProductMakers, ProductProviders, StockAlert;
 
 export function initSequelize() {
     sequelize = new Sequelize({
@@ -36,6 +29,7 @@ export function initSequelize() {
     sequelize.authenticate().then(() => {
         Stock = createStockModel(sequelize);
         Order = createOrderModel(sequelize);
+        StockChange = createStockChangeModel(sequelize);
         Maker = createMakerModel(sequelize);
         Product = createProductModel(sequelize);
         Category = createCategoryModel(sequelize);
@@ -45,16 +39,24 @@ export function initSequelize() {
         ProductMakers = createProductMakersModel(sequelize);
         ProductProviders = createProductProvidersModel(sequelize);
         Migration = createMigrationModel(sequelize);
+        StockAlert = createStockAlert(sequelize);
         Product.belongsToMany(Maker, { through: ProductMakers });
         Maker.belongsToMany(Product, { through: ProductMakers });
         Product.belongsToMany(Provider, { through: ProductProviders, foreignKey: 'productId'});
         Provider.belongsToMany(Product, { through: ProductProviders, foreignKey: 'providerId'});
         Order.belongsTo(Stock);
         Stock.belongsTo(Provider);
+        StockChange.belongsTo(Product);
+        StockChange.belongsTo(Provider);
+        StockChange.belongsTo(Order);
         Provider.hasMany(Stock);
         Product.hasMany(ProductData);
         Product.hasMany(Stock);
         Category.hasMany(Product);
+        Order.belongsTo(Product);
+        Order.belongsTo(Provider);
+        StockAlert.belongsTo(Product);
+        StockAlert.belongsTo(Provider);
 
         sequelize.sync(/*{alter: true}*/).then(() => {
             return migrateDatabase().then(() => {
@@ -100,11 +102,45 @@ export function initSequelize() {
                     });
                 });
 
+                ipcMain.on('get-stockChanges', (event, productId, providerId) => {
+                    if (productId) {
+                        StockChange.findAll({
+                            include: [Order],
+                            order: [
+                                ['createdAt', 'DESC']
+                            ],
+                            where: {
+                                productId: productId,
+                                providerId: providerId
+                            }
+                        }).then(stockChanges => {
+                            return event.returnValue = JSON.parse(JSON.stringify(stockChanges));
+                        })
+                    } else {
+                        StockChange.findAll({
+                            include: [Order],
+                            order: [
+                                ['createdAt', 'DESC']
+                            ]
+                        }).then(stockChanges => {
+                            return event.returnValue = JSON.parse(JSON.stringify(stockChanges));
+                        })
+                    }
+                });
+
+                ipcMain.on('get-stockAlerts', (event) => {
+                    StockAlert.findAll({
+                        include: [Product, Provider]
+                    }).then(alerts => {
+                        return event.returnValue = JSON.parse(JSON.stringify(alerts));
+                    });
+                });
+
                 ipcMain.on('add-product', (event, arg) => {
                     let providers = arg.providers;
                     let makers = arg.makers;
                     Product.create(arg, {
-                        include: [ ProductData]
+                        include: [ProductData]
                     }).then(product => {
                         return product.setProviders(providers).then(() => {
                             return product.setMakers(makers).then(() => {
@@ -219,22 +255,92 @@ export function initSequelize() {
                 ipcMain.on('update-stock', (event, stockId, updates) => {
                     Stock.findByPk(stockId, {include: [Provider]}).then(stock => {
                         const product = stock.productId;
+                        const provider = stock.providerId;
+                        if (updates.quantity < stock.quantity) {
+                            Stock.findAll({
+                                where: {
+                                    productId: product
+                                }
+                            }).then(stocks => {
+                                const quantity = JSON.parse(JSON.stringify(stocks)).reduce( function(a, b){return a + b['quantity'];},0);
+                                StockChange.create({
+                                    productId : product,
+                                    providerId: stock.providerId,
+                                    actualQuantity: quantity
+                                });
+                            });
+                        }
                         if (updates.quantity === 0) {
                             return stock.destroy().then(() => {
-                                return event.sender.send('stock-updated', updates, product);
+                                return event.sender.send('stock-updated', updates, product, provider);
                             });
                         } else {
                             return stock.update(updates).then(() => {
-                                return event.sender.send('stock-updated', updates, product, JSON.parse(JSON.stringify(stock)));
+                                return event.sender.send('stock-updated', updates, product, provider, JSON.parse(JSON.stringify(stock)));
                             });
                         }
                     })
                 });
 
+                ipcMain.on('create-stock-alert', (event, productId, providerId) => {
+                    StockAlert.findAll({
+                        where: {
+                            productId: productId,
+                            providerId: providerId
+                        }
+                    }).then(exists => {
+                        if (exists.length < 1) {
+                            StockAlert.create({
+                                productId: productId,
+                                providerId: providerId
+                            }, {
+                                include: [Product, Provider]
+                            }).then(stockAlert => {
+                                return stockAlert.reload();
+                            }).then(stockAlert => {
+                                return event.sender.send('stock-alert-created', JSON.parse(JSON.stringify(stockAlert)));
+                            })
+                        } else {
+                            return false;
+                        }
+                    });
+                });
+
+                ipcMain.on('remove-stock-alert', (event, productId, providerId) => {
+                    StockAlert.destroy({
+                        where: {
+                            productId: productId,
+                            providerId: providerId
+                        }
+                    }).then(() => {
+                        return event.sender.send('stock-alert-removed');
+                    });
+                });
+
+                ipcMain.on('remove-stock-alerts', (event) => {
+                    StockAlert.destroy({ where : {}}).then(() => {
+                        return event.sender.send('stock-alerts-removed');
+                    });
+                });
+
                 ipcMain.on('validate-order', (event, orderId, updates) => {
                     Order.findByPk(orderId).then(order => {
-                        return order.update(updates).then(() => {
-                            return event.sender.send('order-validated', updates);
+                        Stock.findAll({
+                            where: {
+                                productId: order.productId
+                            }
+                        }).then(stocks => {
+                            const quantity = JSON.parse(JSON.stringify(stocks)).reduce(function(a, b){return a + b['quantity'];},0);
+                            StockChange.create({
+                                orderId: orderId,
+                                productId : order.productId,
+                                providerId: order.providerId,
+                                actualQuantity: quantity
+                            }).then(() => {
+                                return order.update(updates).then(() => {
+                                    return event.sender.send('order-validated', updates);
+                                });
+                            });
                         });
                     })
                 });
@@ -247,9 +353,24 @@ export function initSequelize() {
                     })
                 });
 
+                ipcMain.on('skip-order', (event, order) => {
+                    const stock = order.stock;
+                    stock.quantity = order.quantity;
+                    stock.pricePerUnit = order.price / parseInt(order.quantity);
+                    Stock.create(stock, {
+                        include: [Provider]
+                    }).then((newStock) => {
+                        return newStock.reload();
+                    }).then(stock => {
+                        return event.sender.send('order-skipped', JSON.parse(JSON.stringify(stock)));
+                    })
+                });
+
                 ipcMain.on('order-stock', (event, ordered) => {
-                    Product.findByPk(ordered.stock.productId).then(product => {
-                        return Provider.findByPk(ordered.stock.providerId).then(provider => {
+                    const productId = ordered.productId;
+                    const providerId = ordered.providerId;
+                    Product.findByPk(productId).then(product => {
+                        return Provider.findByPk(providerId).then(provider => {
                             ordered.stock.product = product;
                             ordered.stock.provider = provider;
                             return Order.create(ordered, {
