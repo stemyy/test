@@ -52,7 +52,7 @@ const MakerDialog = (props) => {
             <DialogTitle id="alert-dialog-title">{"Supprimer "+maker.name+" ?"}</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Vous êtes sur le point de supprimer le fabriquant {maker.name}, êtes vous sûr de vouloir continuer ?
+                    Vous êtes sur le point de supprimer le fabricant {maker.name}, êtes vous sûr de vouloir continuer ?
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -67,18 +67,18 @@ const MakerDialog = (props) => {
     } else {
         Content = <React.Fragment>
             <DialogTitle id="form-dialog-title">
-                {type === 'add' ? 'Ajouter un fabriquant' : 'Modifier '+maker.name}
+                {type === 'add' ? 'Ajouter un fabricant' : 'Modifier '+maker.name}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    {type === 'add' ? 'Veuillez entrer le nom du nouveau fabriquant' : 'Veuillez entrer le nouveau nom du fabriquant'}
+                    {type === 'add' ? 'Veuillez entrer le nom du nouveau fabricant' : 'Veuillez entrer le nouveau nom du fabricant'}
                 </DialogContentText>
                 <TextField
                     onChange={(event) => handleChanges("name", event.target.value)}
                     autoFocus
                     margin="dense"
                     id="name"
-                    label="Nom du fabriquant"
+                    label="Nom du fabricant"
                     type="text"
                     value={newMaker.name}
                     fullWidth

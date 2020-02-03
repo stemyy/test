@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const List = (props) => {
     const {providers, toggleDialog} = props;
-    if (providers.length < 1) return <Typography color="inherit">Aucun fabriquant</Typography>;
+    if (providers.length < 1) return <Typography color="inherit">Aucun fournisseur</Typography>;
     return providers.map(provider => (
         <Grid key={provider.id} item>
             <ProviderProfile provider={provider} toggleDialog={toggleDialog}/>

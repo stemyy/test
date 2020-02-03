@@ -27,7 +27,7 @@ export const updateMaker = (makerId, makerUpdate) => {
         ipcRenderer.send('update-maker', makerId, makerUpdate);
         ipcRenderer.once('maker-updated', (event, updates) => {
             dispatch(_updateMaker(makerId, updates));
-            dispatch(openToast({message: 'Fabriquant modifié', open: true}));
+            dispatch(openToast({message: 'Fabricant modifié', open: true}));
         })
     };
 };
@@ -42,7 +42,7 @@ export const removeMaker = (id) => {
         ipcRenderer.send('remove-maker', id);
         ipcRenderer.once('maker-removed', (event, id) => {
             dispatch(_removeMaker(id));
-            dispatch(openToast({message: 'Fabriquant supprimé', open: true}));
+            dispatch(openToast({message: 'Fabricant supprimé', open: true}));
         });
     }
 };

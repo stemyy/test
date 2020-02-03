@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const List = (props) => {
     const {makers, toggleDialog} = props;
-    if (makers.length < 1) return <Typography color="inherit">Aucun fabriquant</Typography>;
+    if (makers.length < 1) return <Typography color="inherit">Aucun fabricant</Typography>;
     return makers.map(maker => (
         <Grid key={maker.id} item>
             <MakerProfile maker={maker} toggleDialog={toggleDialog}/>
@@ -46,13 +46,13 @@ const MakersList = (props) => {
 
     return (
         <React.Fragment>
-            <Typography variant="h2" component="h2" className={classes.title}>Fabriquants</Typography>
+            <Typography variant="h2" component="h2" className={classes.title}>Fabricants</Typography>
             <Grid container className={classes.root} justify="space-evenly" spacing={0}>
                 <List makers={makers} toggleDialog={toggleDialog}/>
             </Grid>
 
             <MakerDialog toggleDialog={toggleDialog} maker={dialogOptions.maker} isOpen={dialogOptions.open} type={dialogOptions.type} actions={actions}/>
-            <Fab aria-label={"Ajouter un fabriquant"} className={classes.fab} color="primary" onClick={() => toggleDialog(true, "add")}>
+            <Fab aria-label={"Ajouter un fabricant"} className={classes.fab} color="primary" onClick={() => toggleDialog(true, "add")}>
                 <AddIcon/>
             </Fab>
         </React.Fragment>
