@@ -16,15 +16,15 @@ const useStyles = makeStyles(theme => ({
 const EditStock = (props) => {
     let dialogTitle, dialogContent;
     const classes = useStyles();
-    const {handleDialog, updateStock, orderStock, type, products, providers} = props;
+    const {handleDialog, updateStock, orderStock, type, products, providers, selectedProduct} = props;
     const [isValid, setIsValid] = useState(false);
     const [submitArguments, setSubmitArguments] = useState([]);
 
     if (type && type === 'add') {
-        dialogContent = <AddStock setSubmitArguments={setSubmitArguments} setIsValid={setIsValid} baseProducts={products} baseProviders={providers}/>;
+        dialogContent = <AddStock setSubmitArguments={setSubmitArguments} setIsValid={setIsValid} baseProducts={products} baseProviders={providers} selected={selectedProduct}/>;
         dialogTitle = "Commande de Stock";
     } else if (type && type === 'remove') {
-        dialogContent = <RemoveStock setSubmitArguments={setSubmitArguments} setIsValid={setIsValid} baseProducts={products} />;
+        dialogContent = <RemoveStock setSubmitArguments={setSubmitArguments} setIsValid={setIsValid} baseProducts={products} selected={selectedProduct}/>;
         dialogTitle = "Retrait de Stock";
     }
 

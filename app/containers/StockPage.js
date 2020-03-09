@@ -23,6 +23,8 @@ function StockPage(props) {
     const [categoryType, setCategoryType] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(0);
     const [editProductDialogIsOpen, setEditProductDialogIsOpen] = useState(false);
+    const [displayDialog, setDisplayDialog] = useState(false);
+    const [dialogType, setDialogType] = useState(false);
     const categoryMenu = new Menu();
     const {removeProduct, addProduct, updateProduct, refreshProducts} = props;
 
@@ -41,6 +43,11 @@ function StockPage(props) {
         if (type === 'update_category' && !category) return null;
         setSelectedCategory(category);
         setCategoryType(type);
+    };
+
+    const handleDialog = (type, selected = null) => {
+        if (type) setDialogType(type);
+        setDisplayDialog(selected ? selected : !displayDialog );
     };
 
     const toggleUpdateProductDialog = (isOpen, product) => {
@@ -77,8 +84,8 @@ function StockPage(props) {
                     ))}
                 </Tabs>
             </AppBar>
-            <StockDialogs rows={rows} addProduct={addProduct}/>
-            <StockTable rows={rows} products={(activeTab !== 0) ? products.filter(product => product.categoryId === activeTab) : products} toggleUpdateProductDialog={toggleUpdateProductDialog}/>
+            <StockDialogs rows={rows} addProduct={addProduct} handleDialog={handleDialog} dialogType={dialogType} displayDialog={displayDialog}/>
+            <StockTable rows={rows} products={(activeTab !== 0) ? products.filter(product => product.categoryId === activeTab) : products} toggleUpdateProductDialog={toggleUpdateProductDialog} handleStockDialog={handleDialog}/>
             <UpdateProductDialog product={selectedProduct} isOpen={editProductDialogIsOpen} setIsOpen={toggleUpdateProductDialog} removeProduct={removeProduct} updateProduct={updateProduct}/>
             <CategoryDialog toggleDialogCategory={toggleDialogCategory} products={products} category={selectedCategory} type={categoryType}/>
         </React.Fragment>

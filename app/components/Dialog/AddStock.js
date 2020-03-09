@@ -28,15 +28,15 @@ const useStyle = makeStyles(theme => ({
 
 const AddStock = (props) => {
     const classes = useStyle();
-    const {baseProducts, baseProviders, setIsValid, setSubmitArguments} = props;
+    const {baseProducts, baseProviders, setIsValid, setSubmitArguments, selected} = props;
     const products = baseProducts.map(suggestion => ({
         value: suggestion.id,
-        label: suggestion.name,
+        label: `${suggestion.name} - ${suggestion.reference}`,
         providers: suggestion.providers,
         stocks: suggestion.stocks
     }));
-    const [productSelectValue, setProductSelectValue] = useState('');
-    const [providerSelectValue, setProviderSelectValue] = useState('');
+    const [productSelectValue, setProductSelectValue] = useState(selected ? selected.id : '');
+    const [providerSelectValue, setProviderSelectValue] = useState(selected ? selected.providers[0].id : '');
     const selectedProduct = productSelectValue ? products.find(product => product.value === productSelectValue) : '';
     const providers = productSelectValue ?
         selectedProduct.providers.map(provider => ({

@@ -20,20 +20,20 @@ const useStyle = makeStyles(theme => ({
 
 const RemoveStock = (props) => {
     const classes = useStyle();
-    const {baseProducts, setIsValid, setSubmitArguments} = props;
+    const {baseProducts, setIsValid, setSubmitArguments, selected} = props;
     const products = baseProducts.filter(function(product) {
         return product.stocks.reduce( function(a, b){
             return a + b['quantity'];
         }, 0) >= 1;
     }).map(suggestion => ({
         value: suggestion.id,
-        label: suggestion.name,
+        label: `${suggestion.name} - ${suggestion.reference}`,
         providers: suggestion.providers,
         stocks: suggestion.stocks
     }));
 
     const [stocks, setStocks] = useState([]);
-    const [productSelectValue, setProductSelectValue] = useState('');
+    const [productSelectValue, setProductSelectValue] = useState(selected ? selected.id : '');
     const [stockSelectValue, setStockSelectValue] = useState('');
     const selectedProduct = products.find(product => product.value === productSelectValue);
     const selectedStock = stocks.find(stock => stock.value === stockSelectValue);

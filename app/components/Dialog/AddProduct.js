@@ -11,7 +11,7 @@ import {
     Input,
     MenuItem,
     Chip,
-    Select,
+    Select, InputAdornment
 } from '@material-ui/core';
 import {useTheme, makeStyles} from '@material-ui/core/styles';
 import baseData from "../baseData";
@@ -59,10 +59,12 @@ function getStyles(value, selected, theme) {
 }
 
 const baseRows = baseData['baseRows'];
+const tableRows = baseData['tableRows'];
 
 const AddProduct = (props) => {
     const [isValid, setIsValid] = useState(false);
-    const [inputValues, setInputValues] = useState({'categoryId' : '0', 'providers' : [], 'makers' : []});
+    const [makersSelectIsOpen, setMakersSelectIsOpen] = useState(false);
+    const [inputValues, setInputValues] = useState({'categoryId' : '0', 'providers' : [], 'makers' : [], 'price' : 0, 'quantity' : 0});
     const {rows, providers, makers, handleDialog, categories} = props;
     const classes = useStyles();
 
@@ -71,6 +73,7 @@ const AddProduct = (props) => {
     }, [inputValues]);
 
     const inputChangeHandle = (event) => {
+        if (event.target.name === 'makers') setMakersSelectIsOpen(false);
         setInputValues({...inputValues, [event.target.name]: event.target.value});
     };
 
@@ -98,6 +101,9 @@ const AddProduct = (props) => {
             for (let i = 0; i < baseRows.length; i++) {
                 product[baseRows[i].name] = inputValues[baseRows[i].name];
             }
+            for (let i = 0; i < tableRows.length; i++) {
+                product[tableRows[i].name] = inputValues[tableRows[i].name];
+            }
 
             if (product.categoryId === 0 || product.categoryId === '0') product.categoryId = null;
             addProduct(product);
@@ -112,7 +118,14 @@ const AddProduct = (props) => {
                 <form className={classes.container}>
                     {baseRows.map(
                         row => (
-                            <Field key={row.name} classes={classes} value={inputValues[row.name]} onChangeInput={inputChangeHandle} row={row} selectable={row.name === 'providers' ? providers : (row.name === 'makers' ? makers : (row.name === 'categoryId' ? categories : null))} handleDelete={(row.name === 'providers' || row.name === 'makers') ? handleDelete : null} />
+                            <Field key={row.name} classes={classes} value={inputValues[row.name]} onChangeInput={inputChangeHandle} row={row} selectable={row.name === 'providers' ? providers : (row.name === 'makers' ? makers : (row.name === 'categoryId' ? categories : null))} handleDelete={(row.name === 'providers' || row.name === 'makers') ? handleDelete : null} isOpen={(row.name === 'makers') ? makersSelectIsOpen : null} setOpen={(row.name === 'makers') ? setMakersSelectIsOpen : null}/>
+                        )
+                    )}
+                </form>
+                <form className={classes.container}>
+                    {tableRows.slice().reverse().map(
+                        row => (
+                            <Field key={row.name} classes={classes} value={inputValues[row.name]} onChangeInput={inputChangeHandle} row={row} />
                         )
                     )}
                     {rows.map(
@@ -138,11 +151,34 @@ const AddProduct = (props) => {
 };
 
 const Field = (props) => {
-    const {row, onChangeInput, classes, selectable, value, handleDelete} = props;
+    const {row, onChangeInput, classes, selectable, value, handleDelete, isOpen, setOpen} = props;
     const theme = useTheme();
     let input;
 
-    if (row.name === 'providers' || row.name === 'makers') {
+    if (row.name === 'quantity') {
+        input = <React.Fragment>
+            <InputLabel id={"label-select-" + row.name}>{row.label}</InputLabel>
+            <Input
+                value={value}
+                name={row.name}
+                inputProps={{ min: 1, max: "" }}
+                type={"number"}
+                onChange={onChangeInput}
+            />
+        </React.Fragment>;
+    } else if (row.name === 'price') {
+        input = <React.Fragment>
+            <InputLabel id={"label-select-" + row.name}>{row.label}</InputLabel>
+            <Input
+                inputProps={{step : 0.01}}
+                onChange={onChangeInput}
+                value={value}
+                name={row.name}
+                type={"number"}
+                endAdornment={<InputAdornment position="end">€</InputAdornment>}
+            />
+        </React.Fragment>;
+    } else if (row.name === 'providers' || row.name === 'makers') {
         const suggestions = selectable.map(suggestion => ({
             value: suggestion.id,
             label: suggestion.name
@@ -153,6 +189,9 @@ const Field = (props) => {
             <Select
                 labelId={"label-select-" + row.name}
                 multiple
+                open={row.name === 'makers' ? isOpen : null}
+                onOpen={row.name === 'makers' ? () => setOpen(true) : null}
+                onClose={row.name === 'makers' ? () => setOpen(false) : null}
                 name={row.name}
                 value={value}
                 onChange={onChangeInput}

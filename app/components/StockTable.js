@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from 'react';
 import {
     Grid,
     Table as ReactTable,
@@ -6,11 +6,11 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Tooltip,
     TableSortLabel,
+    Tooltip
 } from '@material-ui/core';
-import baseData from "./baseData"
-import { remote } from "electron";
+import baseData from './baseData';
+import { remote } from 'electron';
 
 const { Menu, MenuItem } = remote;
 const baseRows = baseData['baseRows'];
@@ -115,14 +115,19 @@ function EnhancedTableHead(props) {
 }
 
 export default function StockTable(props) {
-    let {rows, products, toggleUpdateProductDialog} = props;
+    let {rows, products, toggleUpdateProductDialog, handleStockDialog} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
     const productMenu = new Menu();
     productMenu.append(new MenuItem({ label: 'Modifier le produit', click: () => toggleUpdateProductDialog(true, productMenu.product)}));
+    productMenu.append(new MenuItem({ label: 'Ajouter du stock', click: () => handleStockDialog('add', productMenu.product)}));
+    productMenu.append(new MenuItem({ label: 'Retrait de stock', click: () => {productMenu.enabled ? handleStockDialog('remove', productMenu.product) : alert('Ce produit ne possède pas de stock')}}));
 
     const handleRightClickProduct = (event, product) => {
         event.preventDefault();
+        productMenu.enabled = product.stocks.reduce(function(a, b) {
+            return a + b['quantity'];
+        }, 0) > 0;
         productMenu.product = product;
         productMenu.popup({window: remote.getCurrentWindow()});
     };

@@ -139,15 +139,32 @@ export function initSequelize() {
                 ipcMain.on('add-product', (event, arg) => {
                     let providers = arg.providers;
                     let makers = arg.makers;
+                    const stock = {};
+                    stock.quantity = arg.quantity;
+                    stock.pricePerUnit = arg.price / parseInt(stock.quantity);
+                    stock.providerId = providers[0];
                     Product.create(arg, {
                         include: [ProductData]
                     }).then(product => {
                         return product.setProviders(providers).then(() => {
-                            return product.setMakers(makers).then(() => {
-                                return Product.findByPk(product.id, { include: [ProductData, Maker, Provider, { model: Stock,include: [Provider]}]}).then(p => {
-                                    return event.sender.send('product-created', JSON.parse(JSON.stringify(p)));
+                            if (stock.quantity > 0) {
+                                stock.productId = product.id;
+                                return Stock.create(stock, {
+                                    include: [Provider]
+                                }).then(() => {
+                                    return product.setMakers(makers).then(() => {
+                                        return Product.findByPk(product.id, { include: [ProductData, Maker, Provider, { model: Stock,include: [Provider]}]}).then(p => {
+                                            return event.sender.send('product-created', JSON.parse(JSON.stringify(p)));
+                                        });
+                                    });
+                                })
+                            } else {
+                                return product.setMakers(makers).then(() => {
+                                    return Product.findByPk(product.id, { include: [ProductData, Maker, Provider, { model: Stock,include: [Provider]}]}).then(p => {
+                                        return event.sender.send('product-created', JSON.parse(JSON.stringify(p)));
+                                    });
                                 });
-                            });
+                            }
                         });
                     });
                 });

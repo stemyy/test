@@ -6,10 +6,10 @@ import {
     Remove as RemoveIcon
 } from "@material-ui/icons";
 import React, {useState} from "react";
-import EditStock from "./Dialog/EditStock";
-import AddProduct from "./Dialog/AddProduct";
 import {Dialog} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import EditStock from "./Dialog/EditStock";
+import AddProduct from "./Dialog/AddProduct";
 import StockAlert from "./StockAlertBanner";
 
 const useStyles = makeStyles(theme => ({
@@ -25,22 +25,14 @@ const useStyles = makeStyles(theme => ({
 
 const StockDialog = (props) => {
     const classes = useStyles();
-    const [displayDialog, setDisplayDialog] = useState(false);
-    const [dialogType, setDialogType] = useState('');
     const [fabIsOpen, setFabIsOpen] = useState(false);
 
-    const handleDialog = (type) => {
-        if (type) setDialogType(type);
-        setDisplayDialog(!displayDialog);
-        setFabIsOpen(false);
-    };
-
-    const {addProduct, rows} = props;
+    const {addProduct, rows, handleDialog, displayDialog, dialogType} = props;
     let dialogContent;
     if (dialogType === 'add_product') {
-        dialogContent = <AddProduct handleDialog={handleDialog} rows={rows} addProduct={addProduct} />;
+        dialogContent = <AddProduct handleDialog={handleDialog} rows={rows} addProduct={addProduct}/>;
     } else {
-        dialogContent = <EditStock type={dialogType} handleDialog={handleDialog}/>
+        dialogContent = <EditStock type={dialogType} handleDialog={handleDialog} selectedProduct={displayDialog}/>
     }
     return (
         <React.Fragment>
@@ -79,7 +71,7 @@ const StockDialog = (props) => {
             <Dialog
                 onClose={() => handleDialog(false)}
                 PaperProps={{ className: classes.dialogPaper }}
-                open={displayDialog}
+                open={!!displayDialog}
                 aria-labelledby="form-dialog-stock-title"
             >
                 {dialogContent}
