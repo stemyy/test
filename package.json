@@ -254,7 +254,7 @@
         "react-select": "^2.4.3",
         "redux": "^4.0.1",
         "redux-thunk": "^2.3.0",
-        "sequelize": "^5.8.6",
+        "sequelize": "^6.28.2",
         "sequelize-cli": "^5.5.1",
         "source-map-support": "^0.5.9",
         "sqlite3": "^4.1.0",
